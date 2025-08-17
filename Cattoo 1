@@ -1,1 +1,604 @@
-heelokity
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cattoo 2025 - Calculadora Profesional de Tatuajes</title>
+  <style>
+    :root {
+      --primary: #6C5B7B;
+      --secondary: #C06C84;
+      --accent: #F8B195;
+      --dark: #355C7D;
+      --light: #F9F5F0;
+      --card: #FFFFFF;
+      --text: #333333;
+      --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px;
+      color: var(--text);
+      background-color: var(--light);
+      line-height: 1.6;
+      transition: background 0.3s;
+    }
+    
+    body.dark-mode {
+      --light: #2D3748;
+      --card: #1A202C;
+      --text: #E2E8F0;
+    }
+    
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      font-size: 2.8em;
+      margin-bottom: 5px;
+    }
+    
+    .tagline {
+      text-align: center;
+      color: var(--secondary);
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+    
+    .calculator {
+      background: var(--card);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #E0E0E0;
+      border-radius: 8px;
+      font-size: 16px;
+      background: var(--card);
+      color: var(--text);
+    }
+    
+    button {
+      background-color: var(--secondary);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+      border-radius: 12px;
+      color: white;
+      text-align: center;
+      font-size: 1.3em;
+    }
+    
+    .history {
+      margin-top: 40px;
+    }
+    
+    .history h2 {
+      color: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 8px;
+    }
+    
+    .history-item {
+      background: var(--card);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: var(--shadow);
+    }
+    
+    .options-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background-color: var(--card);
+      padding: 30px;
+      transition: right 0.3s;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      z-index: 999;
+    }
+    
+    .sidebar.active {
+      right: 0;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      background: var(--light);
+      cursor: pointer;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+    }
+    
+    .tab.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .currency-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .currency-btn {
+      padding: 10px;
+      background: var(--light);
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+    }
+    
+    .export-btn {
+      background: var(--dark);
+      margin-top: 20px;
+    }
+    
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      
+      .sidebar {
+        width: 100%;
+        right: -100%;
+      }
+      
+      .currency-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="options-btn" onclick="toggleSidebar()">⚙️</button>
+  
+  <div class="sidebar" id="sidebar">
+    <h2>Configuración Avanzada</h2>
+    
+    <div class="tabs">
+      <div class="tab active" onclick="openTab('pricing')">Precios</div>
+      <div class="tab" onclick="openTab('currencies')">Monedas</div>
+      <div class="tab" onclick="openTab('appearance')">Apariencia</div>
+    </div>
+    
+    <div id="pricing" class="tab-content active">
+      <div class="input-group">
+        <label>Precio Base (por cm²)</label>
+        <input type="number" id="base-rate" value="80">
+      </div>
+      
+      <div class="input-group">
+        <label>Niveles de Complejidad</label>
+        <div id="complexity-container">
+          <input type="number" class="complexity-input" value="5" placeholder="Sencillo (%)">
+          <input type="number" class="complexity-input" value="15" placeholder="Detallado (%)">
+          <input type="number" class="complexity-input" value="30" placeholder="Complejo (%)">
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>Áreas Corporales</label>
+        <div id="area-container">
+          <input type="number" class="area-input" value="5" placeholder="Fácil (%)">
+          <input type="number" class="area-input" value="15" placeholder="Media (%)">
+          <input type="number" class="area-input" value="30" placeholder="Difícil (%)">
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>Recargo por Color (%)</label>
+        <input type="number" id="color-percent" value="5">
+      </div>
+    </div>
+    
+    <div id="currencies" class="tab-content">
+      <div class="input-group">
+        <label>Moneda Principal</label>
+        <input type="text" id="main-currency" value="USD" placeholder="Ej: USD">
+      </div>
+      
+      <div class="input-group">
+        <label>Monedas Predefinidas</label>
+        <div class="currency-grid">
+          <div class="currency-btn" onclick="setCurrency('MXN', 17.5)">MXN (17.5)</div>
+          <div class="currency-btn" onclick="setCurrency('CUP', 24.0)">CUP (24.0)</div>
+          <div class="currency-btn" onclick="setCurrency('EUR', 0.85)">EUR (0.85)</div>
+          <div class="currency-btn" onclick="setCurrency('GBP', 0.75)">GBP (0.75)</div>
+          <div class="currency-btn" onclick="setCurrency('BRL', 5.0)">BRL (5.0)</div>
+          <div class="currency-btn" onclick="setCurrency('ARS', 250.0)">ARS (250.0)</div>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label>API de Monedas (opcional)</label>
+        <input type="text" id="currency-api" placeholder="URL de API de cotización">
+      </div>
+    </div>
+    
+    <div id="appearance" class="tab-content">
+      <div class="input-group">
+        <label>Modo Oscuro</label>
+        <select id="dark-mode" onchange="toggleDarkMode()">
+          <option value="false">Claro</option>
+          <option value="true">Oscuro</option>
+        </select>
+      </div>
+      
+      <div class="input-group">
+        <label>Color Principal</label>
+        <input type="color" id="primary-color" value="#6C5B7B">
+      </div>
+      
+      <div class="input-group">
+        <label>Color Secundario</label>
+        <input type="color" id="secondary-color" value="#C06C84">
+      </div>
+    </div>
+    
+    <button class="export-btn" onclick="exportHistory()">Exportar Historial (CSV)</button>
+  </div>
+
+  <h1>CATTOO</h1>
+  <div class="tagline">Calculadora Profesional para Tatuadores</div>
+  
+  <div class="calculator">
+    <div class="input-group">
+      <label>Tamaño del Tatuaje (cm)</label>
+      <div style="display: flex; gap: 10px;">
+        <input type="number" id="height" placeholder="Alto" style="flex: 1;">
+        <input type="number" id="width" placeholder="Ancho" style="flex: 1;">
+      </div>
+    </div>
+    
+    <div class="input-group">
+      <label>Complejidad del Diseño</label>
+      <select id="complexity">
+        <option value="0">Sencillo (5%)</option>
+        <option value="1">Detallado (15%)</option>
+        <option value="2">Complejo (30%)</option>
+      </select>
+    </div>
+    
+    <div class="input-group">
+      <label>Área Corporal</label>
+      <select id="area">
+        <option value="0">Fácil (5%)</option>
+        <option value="1">Media (15%)</option>
+        <option value="2">Difícil (30%)</option>
+      </select>
+    </div>
+    
+    <div class="input-group">
+      <label>Colores Adicionales</label>
+      <input type="number" id="colors" placeholder="Número de colores" value="0">
+    </div>
+    
+    <div class="input-group">
+      <label>Tiempo Estimado (horas)</label>
+      <input type="number" id="time" placeholder="Ej: 2.5" step="0.5">
+    </div>
+    
+    <div class="input-group">
+      <label>Moneda Alternativa</label>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="secondary-currency" placeholder="Ej: MXN" style="flex: 1;">
+        <input type="number" id="exchange-rate" placeholder="Tipo de cambio" step="0.01" style="flex: 2;">
+      </div>
+    </div>
+    
+    <button onclick="calculatePrice()" style="margin-top: 20px;">CALCULAR PRECIO FINAL</button>
+    
+    <div class="result" id="result">
+      Esperando cálculo...
+    </div>
+    
+    <div id="time-estimate" style="margin-top: 15px; font-style: italic; text-align: center;"></div>
+  </div>
+  
+  <div class="history">
+    <h2>Historial de Cálculos</h2>
+    <div id="history-list">
+      <!-- Los cálculos anteriores aparecerán aquí -->
+    </div>
+  </div>
+
+  <div class="privacy">
+    <p>© 2025 Cattoo - Calculadora Profesional de Tatuajes. Todos los derechos reservados.</p>
+    <p><strong>Política de Privacidad:</strong> Esta herramienta funciona 100% en tu navegador. No almacenamos tus datos. Prohibida la reproducción comercial sin autorización.</p>
+  </div>
+
+  <script>
+    // Variables globales
+    let calculationHistory = JSON.parse(localStorage.getItem('cattooHistory')) || [];
+    const exchangeRates = {
+      USD: 1,
+      MXN: 17.5,
+      CUP: 24.0,
+      EUR: 0.85,
+      GBP: 0.75,
+      BRL: 5.0,
+      ARS: 250.0
+    };
+    
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      updateSelectOptions();
+      updateHistory();
+      loadSettings();
+      
+      // Cargar modo oscuro si está activo
+      if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('dark-mode').value = 'true';
+      }
+    });
+    
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+    
+    function openTab(tabId) {
+      // Oculta todos los contenidos de pestañas
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Desactiva todas las pestañas
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Activa la pestaña seleccionada
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+    
+    function setCurrency(currency, rate) {
+      document.getElementById('secondary-currency').value = currency;
+      document.getElementById('exchange-rate').value = rate;
+    }
+    
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('darkMode', document.getElementById('dark-mode').value);
+    }
+    
+    function calculatePrice() {
+      // Obtener configuración
+      const baseRate = parseFloat(document.getElementById('base-rate').value) || 80;
+      const mainCurrency = document.getElementById('main-currency').value || 'USD';
+      
+      // Obtener valores del formulario
+      const height = parseFloat(document.getElementById('height').value) || 0;
+      const width = parseFloat(document.getElementById('width').value) || 0;
+      const size = height * width;
+      
+      const complexityIndex = document.getElementById('complexity').value;
+      const complexityInputs = document.querySelectorAll('.complexity-input');
+      const complexityPercent = parseFloat(complexityInputs[complexityIndex]?.value) || 0;
+      
+      const areaIndex = document.getElementById('area').value;
+      const areaInputs = document.querySelectorAll('.area-input');
+      const areaPercent = parseFloat(areaInputs[areaIndex]?.value) || 0;
+      
+      const colors = parseInt(document.getElementById('colors').value) || 0;
+      const colorPercent = parseFloat(document.getElementById('color-percent').value) || 5;
+      
+      const time = parseFloat(document.getElementById('time').value) || 0;
+      
+      // Calcular precio
+      let basePrice = size * baseRate;
+      basePrice *= (1 + complexityPercent / 100);
+      basePrice *= (1 + areaPercent / 100);
+      basePrice += (basePrice * (colors * colorPercent / 100));
+      
+      // Mostrar resultado
+      const secondaryCurrency = document.getElementById('secondary-currency').value;
+      let exchangeRate = parseFloat(document.getElementById('exchange-rate').value);
+      
+      // Intentar obtener tasa de cambio de API si no se especificó
+      if (!exchangeRate && secondaryCurrency && exchangeRates[secondaryCurrency]) {
+        exchangeRate = exchangeRates[secondaryCurrency];
+        document.getElementById('exchange-rate').value = exchangeRate;
+      }
+      
+      let resultHTML = `
+        <div style="margin-bottom: 10px;">
+          <strong>Total en ${mainCurrency}:</strong> ${basePrice.toFixed(2)}
+        </div>
+      `;
+      
+      if (secondaryCurrency && exchangeRate && exchangeRate !== 0) {
+        const convertedPrice = basePrice / exchangeRate;
+        resultHTML += `
+          <div>
+            <strong>En ${secondaryCurrency}:</strong> ${convertedPrice.toFixed(2)}
+          </div>
+          <div style="font-size: 0.8em; margin-top: 8px;">
+            Tipo de cambio: 1 ${mainCurrency} = ${exchangeRate} ${secondaryCurrency}
+          </div>
+        `;
+      }
+      
+      document.getElementById('result').innerHTML = resultHTML;
+      
+      // Mostrar tiempo estimado
+      if (time > 0) {
+        document.getElementById('time-estimate').innerHTML = `
+          <strong>Tiempo estimado:</strong> ${time} horas
+          <br>
+          <strong>Precio por hora:</strong> ${(basePrice / time).toFixed(2)} ${mainCurrency}/hora
+        `;
+      }
+      
+      // Guardar en historial
+      const calculation = {
+        date: new Date().toLocaleString(),
+        size: `${height}×${width} cm`,
+        price: basePrice.toFixed(2),
+        currency: mainCurrency,
+        secondaryCurrency: secondaryCurrency ? `${secondaryCurrency}: ${(basePrice/exchangeRate).toFixed(2)}` : '',
+        time: time ? `${time} horas` : 'No especificado',
+        details: `Complejidad: ${complexityPercent}%, Área: ${areaPercent}%, Colores: ${colors}`
+      };
+      
+      calculationHistory.unshift(calculation);
+      if (calculationHistory.length > 10) calculationHistory.pop();
+      
+      localStorage.setItem('cattooHistory', JSON.stringify(calculationHistory));
+      updateHistory();
+    }
+    
+    function updateHistory() {
+      const historyList = document.getElementById('history-list');
+      historyList.innerHTML = '';
+      
+      calculationHistory.forEach(item => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+          <div><strong>${item.date}</strong></div>
+          <div>Tamaño: ${item.size}</div>
+          <div>Precio: ${item.price} ${item.currency} ${item.secondaryCurrency ? `(${item.secondaryCurrency})` : ''}</div>
+          <div>Tiempo: ${item.time}</div>
+          <div style="font-size: 0.9em; color: #666; margin-top: 5px;">${item.details}</div>
+        `;
+        historyList.appendChild(historyItem);
+      });
+    }
+    
+    function exportHistory() {
+      let csv = 'Fecha,Tamaño,Precio,Moneda,Moneda Alternativa,Tiempo,Detalles\n';
+      
+      calculationHistory.forEach(item => {
+        csv += `"${item.date}","${item.size}","${item.price}","${item.currency}","${item.secondaryCurrency}","${item.time}","${item.details.replace(/"/g, '""')}"\n`;
+      });
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'cattoo_history.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    function loadSettings() {
+      // Cargar colores personalizados
+      const primaryColor = localStorage.getItem('primaryColor') || '#6C5B7B';
+      const secondaryColor = localStorage.getItem('secondaryColor') || '#C06C84';
+      
+      document.documentElement.style.setProperty('--primary', primaryColor);
+      document.documentElement.style.setProperty('--secondary', secondaryColor);
+      document.getElementById('primary-color').value = primaryColor;
+      document.getElementById('secondary-color').value = secondaryColor;
+    }
+    
+    // Event listeners para colores
+    document.getElementById('primary-color').addEventListener('input', function(e) {
+      document.documentElement.style.setProperty('--primary', e.target.value);
+      localStorage.setItem('primaryColor', e.target.value);
+    });
+    
+    document.getElementById('secondary-color').addEventListener('input', function(e) {
+      document.documentElement.style.setProperty('--secondary', e.target.value);
+      localStorage.setItem('secondaryColor', e.target.value);
+    });
+    
+    function updateSelectOptions() {
+      const complexitySelect = document.getElementById('complexity');
+      const areaSelect = document.getElementById('area');
+      
+      // Actualizar opciones de complejidad
+      complexitySelect.innerHTML = '';
+      document.querySelectorAll('.complexity-input').forEach((input, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.text = `Nivel ${index+1} (${input.value}%)`;
+        complexitySelect.appendChild(option);
+      });
+      
+      // Actualizar opciones de área
+      areaSelect.innerHTML = '';
+      document.querySelectorAll('.area-input').forEach((input, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.text = `Área ${index+1} (${input.value}%)`;
+        areaSelect.appendChild(option);
+      });
+    }
+  </script>
+</body>
+</html>
