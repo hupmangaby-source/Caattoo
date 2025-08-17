@@ -1,0 +1,14 @@
+def calcular_precio_tatuaje():
+    print("¡Calculadora de precio para tatuajes!")
+    tamaño = float(input("Tamaño (cm²): "))
+    complejidad = int(input("Complejidad (1-10): "))
+    tiene_color = input("¿Lleva color? (s/n): ").lower() == 's'
+
+    # Fórmula de ejemplo (ajustable)
+    precio = tamaño * complejidad * 2
+    if tiene_color:
+        precio *= 1.8
+
+    print(f"Precio estimado: ${precio:.2f}")
+
+calcular_precio_tatuaje()
