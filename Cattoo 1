@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cattoo - Calculadora de Tatuajes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6a1b9a;
+            --secondary-color: #9c27b0;
+            --accent-color: #e91e63;
+            --dark-color: #333;
+            --light-color: #f5f5f5;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+        
+        .sidebar.collapsed {
+            width: 50px;
+            overflow: hidden;
+            padding: 20px 5px;
+        }
+        
+        .sidebar.collapsed .sidebar-section,
+        .sidebar.collapsed .sidebar-title {
+            display: none;
+        }
+        
+        .toggle-sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-sidebar:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .sidebar-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .section-title i {
+            transition: transform 0.3s ease;
+        }
+        
+        .section-title.collapsed i {
+            transform: rotate(-90deg);
+        }
+        
+        .section-content {
+            padding-left: 25px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .section-content.collapsed {
+            height: 0;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #d81b60;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #43a047;
+        }
+        
+        .content-area {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        .tab-header {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #555;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .result-card {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .detail-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .detail-value.total {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+        
+        .preview-container {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .preview-title {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .preview-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .preview-logo h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .preview-client {
+            margin-bottom: 30px;
+        }
+        
+        .preview-client h3 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+        
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .preview-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .preview-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .preview-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .preview-total {
+            text-align: right;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 20px;
+            color: var(--primary-color);
+        }
+        
+        .preview-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .download-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .language-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #555;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .language-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .language-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .privacy-policy {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .privacy-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+        
+        .privacy-section {
+            margin-bottom: 20px;
+        }
+        
+        .privacy-section h3 {
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .privacy-section p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .admin-panel {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .sidebar.collapsed {
+                width: 100%;
+                height: 60px;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .sidebar.collapsed .toggle-sidebar {
+                margin-bottom: 0;
+            }
+            
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-paint-brush"></i> Cattoo</h1>
+            <p>Calculadora profesional de precios para tatuadores</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="language-switcher">
+            <button class="language-btn active" data-lang="es">ES</button>
+            <button class="language-btn" data-lang="en">EN</button>
+        </div>
+
+        <div id="login-section">
+            <div class="login-form">
+                <h2 class="login-title" data-i18n="login_title">Iniciar sesión</h2>
+                <div class="form-group">
+                    <label for="username" data-i18n="username">Usuario</label>
+                    <input type="text" id="username" class="form-control" placeholder="Tu usuario">
+                </div>
+                <div class="form-group">
+                    <label for="password" data-i18n="password">Contraseña</label>
+                    <input type="password" id="password" class="form-control" placeholder="Tu contraseña">
+                </div>
+                <button id="login-btn" class="btn btn-block" data-i18n="login">Ingresar</button>
+                <p style="text-align: center; margin-top: 15px;" data-i18n="guest_message">O <a href="#" id="guest-login">continúa como invitado</a> para probar la calculadora</p>
+            </div>
+        </div>
+
+        <div id="app-section" style="display: none;">
+            <div class="main-content">
+                <div class="sidebar">
+                    <button class="toggle-sidebar">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <h3 class="sidebar-title">
+                        <i class="fas fa-cog"></i>
+                        <span data-i18n="settings">Configuración</span>
+                    </h3>
+                    
+                    <div class="sidebar-section">
+                        <div class="section-title">
+                            <i class="fas fa-user"></i>
+                            <span data-i18n="client_info">Información del Cliente</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="form-group">
+                                <label for="client-name" data-i18n="client_name">Nombre del Cliente</label>
+                                <input type="text" id="client-name" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="client-phone" data-i18n="client_phone">Teléfono</label>
+                                <input type="text" id="client-phone" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="client-email" data-i18n="client_email">Email</label>
+                                <input type="email" id="client-email" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <div class="section-title">
+                            <i class="fas fa-tag"></i>
+                            <span data-i18n="pricing">Precio Base</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="form-group">
+                                <label for="base-price" data-i18n="base_price">Precio Base (USD)</label>
+                                <input type="number" id="base-price" class="form-control" value="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="price-method" data-i18n="price_method">Método de cálculo</label>
+                                <select id="price-method" class="form-control">
+                                    <option value="hourly" data-i18n="hourly_rate">Por hora</option>
+                                    <option value="piece" data-i18n="per_piece">Por pieza</option>
+                                    <option value="size" data-i18n="by_size">Por tamaño</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="hours-group">
+                                <label for="hours" data-i18n="estimated_hours">Horas estimadas</label>
+                                <input type="number" id="hours" class="form-control" value="2" min="1">
+                            </div>
+                            <div class="form-group" id="size-group" style="display: none;">
+                                <label for="size" data-i18n="size_cm">Tamaño (cm)</label>
+                                <input type="text" id="size" class="form-control" placeholder="Ej: 10x15">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <div class="section-title">
+                            <i class="fas fa-layer-group"></i>
+                            <span data-i18n="complexity">Complejidad</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="form-group">
+                                <label for="design-complexity" data-i18n="design_complexity">Complejidad del diseño</label>
+                                <select id="design-complexity" class="form-control">
+                                    <option value="1" data-i18n="simple">Simple (+0%)</option>
+                                    <option value="1.2" data-i18n="medium">Medio (+20%)</option>
+                                    <option value="1.5" data-i18n="complex">Complejo (+50%)</option>
+                                    <option value="2" data-i18n="very_complex">Muy complejo (+100%)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="body-part" data-i18n="body_part">Parte del cuerpo</label>
+                                <select id="body-part" class="form-control">
+                                    <option value="1" data-i18n="easy_area">Área fácil (+0%)</option>
+                                    <option value="1.15" data-i18n="medium_area">Área media (+15%)</option>
+                                    <option value="1.3" data-i18n="difficult_area">Área difícil (+30%)</option>
+                                    <option value="1.5" data-i18n="very_difficult">Área muy difícil (+50%)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="color-amount" data-i18n="color_amount">Cantidad de color</label>
+                                <select id="color-amount" class="form-control">
+                                    <option value="1" data-i18n="black_gray">Negro/gris (+0%)</option>
+                                    <option value="1.1" data-i18n="some_color">Algo de color (+10%)</option>
+                                    <option val
